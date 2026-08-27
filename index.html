@@ -3,268 +3,269 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bảng VI - Tra Cứu Thủy Lực Ống Gang Dẻo (Colebrook-White)</title>
+    <title>Bảng Tính Thủy Lực Ống Gang Dẻo</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 20px;
-            background-color: #f8f9fa;
-            color: #212529;
-        }
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            background: #ffffff;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        }
-        h2 {
-            text-align: center;
-            color: #1a365d;
-            margin-bottom: 5px;
-            text-transform: uppercase;
-            font-size: 20px;
-        }
-        .subtitle {
-            text-align: center;
-            color: #4a5568;
-            margin-bottom: 20px;
-            font-size: 14px;
-        }
-        .controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #edf2f7;
-            padding: 12px 20px;
-            border-radius: 6px;
-            margin-bottom: 20px;
-            border: 1px solid #cbd5e0;
-        }
-        .filter-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        label {
-            font-weight: 600;
-            color: #2d3748;
-        }
-        select, input {
-            padding: 6px 12px;
-            border: 1px solid #a0aec0;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-        .table-responsive {
-            overflow-x: auto;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13.5px;
-            text-align: center;
-            background-color: #fff;
-        }
-        table, th, td {
-            border: 1px solid #4a5568;
-        }
-        th {
-            background-color: #f1f5f9;
-            color: #0f172a;
-            font-weight: bold;
-            padding: 6px;
-        }
-        td {
-            padding: 5px 8px;
-        }
-        tr:nth-child(even) {
-            background-color: #f8fafc;
-        }
-        tr:hover {
-            background-color: #e2e8f0;
-        }
-        .col-q {
-            font-weight: bold;
-            background-color: #f1f5f9;
-            width: 80px;
-        }
-        .j-val {
-            color: #b91c1c;
-            font-weight: 600;
-        }
-        .v-val {
-            color: #15803d;
-            font-weight: 500;
-        }
-        .footer-page {
-            text-align: right;
-            margin-top: 15px;
-            font-weight: bold;
-            color: #718096;
-        }
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f7f6; color: #333; }
+        .header-container { text-align: center; margin-bottom: 20px; }
+        h1 { font-size: 20px; color: #1a365d; margin-bottom: 5px; text-transform: uppercase; }
+        p.subtitle { font-size: 14px; color: #4a5568; font-style: italic; margin-top: 0; }
+        .controls { display: flex; gap: 15px; justify-content: center; align-items: center; background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 20px; flex-wrap: wrap; }
+        .controls label { font-weight: bold; font-size: 14px; }
+        .controls select, .controls input { padding: 6px 12px; border: 1px solid #cbd5e0; border-radius: 4px; font-size: 14px; }
+        .table-wrapper { overflow-x: auto; background: #fff; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); max-height: 75vh; }
+        table { border-collapse: collapse; width: 100%; font-size: 13px; text-align: center; }
+        th, td { border: 1px solid #e2e8f0; padding: 6px 10px; }
+        thead th { background-color: #2b6cb0; color: white; position: sticky; top: 0; z-index: 10; }
+        thead tr:nth-child(2) th { top: 31px; background-color: #3182ce; }
+        thead tr:nth-child(3) th { top: 58px; background-color: #4299e1; }
+        tbody tr:nth-child(even) { background-color: #f7fafc; }
+        tbody tr:hover { background-color: #ebf8ff; }
+        .red-text { color: #c53030; font-weight: 500; }
+        .blue-text { color: #2b6cb0; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>BẢNG VI: BẢNG TÍNH THỦY LỰC ỐNG GANG DẺO</h2>
-    <div class="subtitle">(Tính theo công thức Colebrook - White)</div>
+<div class="header-container">
+    <h1>Bảng VI. Những giá trị i tính bằng [m/km] và v đối với ống cấp nước bằng gang dẻo theo hãng (PONT-A-MOUSSON)</h1>
+    <p class="subtitle">(Tính theo công thức Colebrook - White)</p>
+</div>
 
-    <div class="controls">
-        <div class="filter-group">
-            <label for="kSelect">Chọn độ nhám k cho tổn thất j (m/km):</label>
-            <select id="kSelect" onchange="renderTable()">
-                <option value="k003">k = 0,03 mm (Phủ trơn đặc biệt)</option>
-                <option value="k010" selected>k = 0,10 mm (Tráng vữa xi măng tiêu chuẩn)</option>
-                <option value="both">Hiển thị cả 2 giá trị k (Tương tự bản gốc)</option>
-            </select>
-        </div>
-        <div class="filter-group">
-            <label for="qSearch">Lọc nhanh Q (l/s):</label>
-            <input type="text" id="qSearch" placeholder="Nhập Q..." onkeyup="renderTable()">
-        </div>
+<div class="controls">
+    <div>
+        <label for="kSelect">Chọn độ nhám k cho tổn thất j (m/km): </label>
+        <select id="kSelect" onchange="renderTable()">
+            <option value="both">Hiển thị cả 2 giá trị k (Tương tự bản gốc)</option>
+            <option value="0.03">Chỉ hiển thị k = 0.03mm</option>
+            <option value="0.10">Chỉ hiển thị k = 0.10mm</option>
+        </select>
     </div>
-
-    <div class="table-responsive">
-        <table id="hydraulicTable">
-            <thead id="tableHead">
-                <!-- Header sẽ được dựng bằng JavaScript dựa theo tùy chọn k -->
-            </thead>
-            <tbody id="tableBody">
-                <!-- Dữ liệu sẽ nạp tự động -->
-            </tbody>
-        </table>
+    <div>
+        <label for="dnFilter">Lọc Đường Kính (DN): </label>
+        <select id="dnFilter" onchange="renderTable()">
+            <option value="all">Tất cả DN</option>
+            <option value="DN40">DN40</option>
+            <option value="DN50">DN50</option>
+            <option value="DN60">DN60</option>
+            <option value="DN65">DN65</option>
+            <option value="DN80">DN80</option>
+            <option value="DN100">DN100</option>
+            <option value="DN125">DN125</option>
+            <option value="DN150">DN150</option>
+            <option value="DN200">DN200</option>
+        </select>
     </div>
+    <div>
+        <label for="qInput">Lọc nhanh Q (l/s): </label>
+        <input type="number" id="qInput" step="0.1" placeholder="Nhập Q..." oninput="renderTable()">
+    </div>
+</div>
 
-    <div class="footer-page">Trang 105</div>
+<div class="table-wrapper">
+    <table id="hydraulicTable">
+        <thead id="tableHead"></thead>
+        <tbody id="tableBody"></tbody>
+    </table>
 </div>
 
 <script>
-// Cấu trúc dữ liệu theo hình trang 105
-const pipeData = [
-    { q: "0,60", dn40: { k003: "8,514", k010: "9,339", v: "0,48" }, dn50: null, dn60: null },
-    { q: "0,70", dn40: { k003: "11,209", k010: "12,399", v: "0,56" }, dn50: null, dn60: null },
-    { q: "0,80", dn40: { k003: "14,238", k010: "15,870", v: "0,64" }, dn50: null, dn60: null },
-    { q: "0,90", dn40: { k003: "17,596", k010: "19,751", v: "0,72" }, dn50: null, dn60: null },
-    { q: "1,00", dn40: { k003: "21,280", k010: "24,039", v: "0,80" }, dn50: { k003: "7,211", k010: "7,901", v: "0,51" }, dn60: null },
-    { q: "1,10", dn40: { k003: "25,286", k010: "28,735", v: "0,88" }, dn50: { k003: "8,552", k010: "9,418", v: "0,56" }, dn60: null },
-    { q: "1,20", dn40: { k003: "29,610", k010: "33,836", v: "0,95" }, dn50: { k003: "9,998", k010: "11,063", v: "0,61" }, dn60: null },
-    { q: "1,30", dn40: { k003: "34,252", k010: "39,343", v: "1,03" }, dn50: { k003: "11,546", k010: "12,834", v: "0,66" }, dn60: null },
-    { q: "1,40", dn40: { k003: "39,209", k010: "45,254", v: "1,11" }, dn50: { k003: "13,197", k010: "14,731", v: "0,71" }, dn60: null },
-    { q: "1,50", dn40: { k003: "44,479", k010: "51,569", v: "1,19" }, dn50: { k003: "14,949", k010: "16,754", v: "0,76" }, dn60: { k003: "6,173", k010: "6,754", v: "0,53" } },
-    { q: "1,60", dn40: { k003: "50,061", k010: "58,288", v: "1,27" }, dn50: { k003: "16,801", k010: "18,903", v: "0,81" }, dn60: { k003: "6,931", k010: "7,609", v: "0,57" } },
-    { q: "1,70", dn40: { k003: "55,953", k010: "65,411", v: "1,35" }, dn50: { k003: "18,753", k010: "21,178", v: "0,87" }, dn60: { k003: "7,729", k010: "8,513", v: "0,60" } },
-    { q: "1,80", dn40: { k003: "62,155", k010: "72,937", v: "1,43" }, dn50: { k003: "20,805", k010: "23,578", v: "0,92" }, dn60: { k003: "8,567", k010: "9,465", v: "0,64" } },
-    { q: "1,90", dn40: { k003: "68,665", k010: "80,865", v: "1,51" }, dn50: { k003: "22,956", k010: "26,103", v: "0,97" }, dn60: { k003: "9,445", k010: "10,466", v: "0,67" } },
-    { q: "2,00", dn40: { k003: "75,482", k010: "89,197", v: "1,59" }, dn50: { k003: "25,206", k010: "28,752", v: "1,02" }, dn60: { k003: "10,362", k010: "11,515", v: "0,71" } },
-    { q: "2,10", dn40: { k003: "82,605", k010: "97,931", v: "1,67" }, dn50: { k003: "27,554", k010: "31,527", v: "1,07" }, dn60: { k003: "11,318", k010: "12,612", v: "0,74" } },
-    { q: "2,20", dn40: { k003: "90,034", k010: "107,067", v: "1,75" }, dn50: { k003: "29,999", k010: "34,427", v: "1,12" }, dn60: { k003: "12,312", k010: "13,758", v: "0,78" } },
-    { q: "2,30", dn40: { k003: "97,769", k010: "116,606", v: "1,83" }, dn50: { k003: "32,543", k010: "37,451", v: "1,17" }, dn60: { k003: "13,346", k010: "14,951", v: "0,81" } },
-    { q: "2,40", dn40: { k003: "105,808", k010: "126,546", v: "1,91" }, dn50: { k003: "35,183", k010: "40,600", v: "1,22" }, dn60: { k003: "14,418", k010: "16,193", v: "0,85" } },
-    { q: "2,50", dn40: { k003: "114,150", k010: "136,889", v: "1,99" }, dn50: { k003: "37,920", k010: "43,874", v: "1,27" }, dn60: { k003: "15,529", k010: "17,483", v: "0,88" } },
-    { q: "2,60", dn40: { k003: "122,796", k010: "147,634", v: "2,07" }, dn50: { k003: "40,754", k010: "47,272", v: "1,32" }, dn60: { k003: "16,678", k010: "18,821", v: "0,92" } },
-    { q: "2,70", dn40: { k003: "131,745", k010: "158,781", v: "2,15" }, dn50: { k003: "43,684", k010: "50,795", v: "1,38" }, dn60: { k003: "17,865", k010: "20,207", v: "0,95" } },
-    { q: "2,80", dn40: { k003: "140,997", k010: "170,330", v: "2,23" }, dn50: { k003: "46,711", k010: "54,442", v: "1,43" }, dn60: { k003: "19,091", k010: "21,640", v: "0,99" } },
-    { q: "2,90", dn40: { k003: "150,550", k010: "182,280", v: "2,31" }, dn50: { k003: "49,833", k010: "58,213", v: "1,48" }, dn60: { k003: "20,354", k010: "23,122", v: "1,03" } }
+// Dữ liệu tổng hợp từ Trang 105 đến Trang 109
+const rawData = [
+    // Trang 105 & 106 (DN40, DN50, DN60)
+    { Q: 0.60, DN40: { k03: 8.514, k10: 9.339, v: 0.48 } },
+    { Q: 0.70, DN40: { k03: 11.209, k10: 12.399, v: 0.56 } },
+    { Q: 0.80, DN40: { k03: 14.238, k10: 15.870, v: 0.64 } },
+    { Q: 0.90, DN40: { k03: 17.596, k10: 19.751, v: 0.72 } },
+    { Q: 1.00, DN40: { k03: 21.280, k10: 24.039, v: 0.80 }, DN50: { k03: 7.211, k10: 7.901, v: 0.51 } },
+    { Q: 1.10, DN40: { k03: 25.286, k10: 28.735, v: 0.88 }, DN50: { k03: 8.552, k10: 9.418, v: 0.56 } },
+    { Q: 1.20, DN40: { k03: 29.610, k10: 33.836, v: 0.95 }, DN50: { k03: 9.998, k10: 11.063, v: 0.61 } },
+    { Q: 1.30, DN40: { k03: 34.252, k10: 39.343, v: 1.03 }, DN50: { k03: 11.546, k10: 12.834, v: 0.66 } },
+    { Q: 1.40, DN40: { k03: 39.209, k10: 45.254, v: 1.11 }, DN50: { k03: 13.197, k10: 14.731, v: 0.71 } },
+    { Q: 1.50, DN40: { k03: 44.479, k10: 51.569, v: 1.19 }, DN50: { k03: 14.949, k10: 16.754, v: 0.76 }, DN60: { k03: 6.173, k10: 6.754, v: 0.53 } },
+    { Q: 1.60, DN40: { k03: 50.061, k10: 58.288, v: 1.27 }, DN50: { k03: 16.801, k10: 18.903, v: 0.81 }, DN60: { k03: 6.931, k10: 7.609, v: 0.57 }, DN65: { k03: 4.706, k10: 5.117, v: 0.18 } },
+    { Q: 1.70, DN40: { k03: 55.953, k10: 65.411, v: 1.35 }, DN50: { k03: 18.753, k10: 21.178, v: 0.87 }, DN60: { k03: 7.729, k10: 8.513, v: 0.60 } },
+    { Q: 1.80, DN40: { k03: 62.155, k10: 72.937, v: 1.43 }, DN50: { k03: 20.805, k10: 23.578, v: 0.92 }, DN60: { k03: 8.567, k10: 9.465, v: 0.64 }, DN65: { k03: 5.813, k10: 6.358, v: 0.54 } },
+    { Q: 1.90, DN40: { k03: 68.665, k10: 80.865, v: 1.51 }, DN50: { k03: 22.956, k10: 26.103, v: 0.97 }, DN60: { k03: 9.445, k10: 10.466, v: 0.67 } },
+    { Q: 2.00, DN40: { k03: 75.482, k10: 89.197, v: 1.59 }, DN50: { k03: 25.206, k10: 28.752, v: 1.02 }, DN60: { k03: 10.362, k10: 11.515, v: 0.71 }, DN65: { k03: 7.026, k10: 7.727, v: 0.60 } },
+    { Q: 2.10, DN40: { k03: 82.605, k10: 97.931, v: 1.67 }, DN50: { k03: 27.554, k10: 31.527, v: 1.07 }, DN60: { k03: 11.318, k10: 12.612, v: 0.74 } },
+    { Q: 2.20, DN40: { k03: 90.034, k10: 107.067, v: 1.75 }, DN50: { k03: 29.999, k10: 34.427, v: 1.12 }, DN60: { k03: 12.312, k10: 13.758, v: 0.78 }, DN65: { k03: 8.313, k10: 9.223, v: 0.66 } },
+    { Q: 2.30, DN40: { k03: 97.769, k10: 116.606, v: 1.83 }, DN50: { k03: 32.543, k10: 37.451, v: 1.17 }, DN60: { k03: 13.346, k10: 14.951, v: 0.81 } },
+    { Q: 2.40, DN40: { k03: 105.808, k10: 126.546, v: 1.91 }, DN50: { k03: 35.183, k10: 40.600, v: 1.22 }, DN60: { k03: 14.418, k10: 16.193, v: 0.85 }, DN65: { k03: 9.765, k10: 10.847, v: 0.72 } },
+    { Q: 2.50, DN40: { k03: 114.150, k10: 136.889, v: 1.99 }, DN50: { k03: 37.920, k10: 43.874, v: 1.27 }, DN60: { k03: 15.529, k10: 17.483, v: 0.88 } },
+    { Q: 2.60, DN40: { k03: 122.796, k10: 147.634, v: 2.07 }, DN50: { k03: 40.754, k10: 47.272, v: 1.32 }, DN60: { k03: 16.678, k10: 18.821, v: 0.92 }, DN65: { k03: 11.289, k10: 12.597, v: 0.78 }, DN80: { k03: 4.121, k10: 4.480, v: 0.52 } },
+    { Q: 2.70, DN40: { k03: 131.745, k10: 158.781, v: 2.15 }, DN50: { k03: 43.684, k10: 50.795, v: 1.38 }, DN60: { k03: 17.865, k10: 20.207, v: 0.95 } },
+    { Q: 2.80, DN40: { k03: 140.997, k10: 170.330, v: 2.23 }, DN50: { k03: 46.711, k10: 54.442, v: 1.43 }, DN60: { k03: 19.091, k10: 21.640, v: 0.99 }, DN65: { k03: 12.915, k10: 14.473, v: 0.84 }, DN80: { k03: 4.709, k10: 5.138, v: 0.56 } },
+    { Q: 2.90, DN40: { k03: 150.550, k10: 182.280, v: 2.31 }, DN50: { k03: 49.833, k10: 58.213, v: 1.48 }, DN60: { k03: 20.354, k10: 23.122, v: 1.03 } },
+    { Q: 3.00, DN40: { k03: 160.406, k10: 194.632, v: 2.39 }, DN50: { k03: 53.051, k10: 62.109, v: 1.53 }, DN60: { k03: 21.655, k10: 24.651, v: 1.06 }, DN65: { k03: 14.612, k10: 16.476, v: 0.90 }, DN80: { k03: 5.333, k10: 5.838, v: 0.60 } },
+    { Q: 3.10, DN40: { k03: 170.563, k10: 207.386, v: 2.47 }, DN50: { k03: 56.365, k10: 66.128, v: 1.58 }, DN60: { k03: 22.994, k10: 26.229, v: 1.10 } },
+    { Q: 3.20, DN40: { k03: 181.021, k10: 220.542, v: 2.55 }, DN50: { k03: 59.774, k10: 70.272, v: 1.63 }, DN60: { k03: 24.370, k10: 27.854, v: 1.13 }, DN65: { k03: 16.470, k10: 18.605, v: 0.96 }, DN80: { k03: 5.992, k10: 6.582, v: 0.64 } },
+    { Q: 3.30, DN40: { k03: 191.779, k10: 234.099, v: 2.63 }, DN50: { k03: 63.279, k10: 74.541, v: 1.68 }, DN60: { k03: 25.785, k10: 29.527, v: 1.17 } },
+    { Q: 3.40, DN40: { k03: 202.838, k10: 248.058, v: 2.71 }, DN50: { k03: 66.879, k10: 78.933, v: 1.73 }, DN60: { k03: 27.236, k10: 31.247, v: 1.20 }, DN65: { k03: 18.399, k10: 20.860, v: 1.02 }, DN80: { k03: 6.686, k10: 7.369, v: 0.68 } },
+    { Q: 3.50, DN40: { k03: 214.198, k10: 262.418, v: 2.79 }, DN50: { k03: 70.574, k10: 83.450, v: 1.78 }, DN60: { k03: 28.725, k10: 33.016, v: 1.24 } },
+    { Q: 3.60, DN40: { k03: 225.858, k10: 277.180, v: 2.86 }, DN50: { k03: 74.363, k10: 88.091, v: 1.83 }, DN60: { k03: 30.252, k10: 34.832, v: 1.27 }, DN65: { k03: 20.427, k10: 23.240, v: 1.08 }, DN80: { k03: 7.415, k10: 8.198, v: 0.72 } },
+    { Q: 3.70, DN40: { k03: 237.817, k10: 292.343, v: 2.94 }, DN50: { k03: 78.248, k10: 92.855, v: 1.88 }, DN60: { k03: 31.815, k10: 36.696, v: 1.31 } },
+    { Q: 3.80, DN50: { k03: 82.227, k10: 97.744, v: 1.94 }, DN60: { k03: 33.416, k10: 38.607, v: 1.34 }, DN65: { k03: 22.554, k10: 25.746, v: 1.15 }, DN80: { k03: 8.180, k10: 9.069, v: 0.76 } },
+    { Q: 3.90, DN50: { k03: 86.300, k10: 102.757, v: 1.99 }, DN60: { k03: 35.054, k10: 40.566, v: 1.38 } },
+    
+    // Trang 107 (DN65, DN80, DN100 bổ sung)
+    { Q: 4.00, DN50: { k03: 90.468, k10: 107.894, v: 2.04 }, DN60: { k03: 36.730, k10: 42.573, v: 1.41 }, DN65: { k03: 24.781, k10: 28.377, v: 1.21 }, DN80: { k03: 8.978, k10: 9.984, v: 0.80 }, DN100: { k03: 3.039, k10: 3.289, v: 0.51 } },
+    { Q: 4.20, DN50: { k03: 99.088, k10: 118.540, v: 2.14 }, DN60: { k03: 40.191, k10: 46.730, v: 1.49 }, DN65: { k03: 27.106, k10: 31.134, v: 1.27 }, DN80: { k03: 9.812, k10: 10.940, v: 0.84 }, DN100: { k03: 3.318, k10: 3.600, v: 0.53 } },
+    { Q: 4.40, DN50: { k03: 108.084, k10: 129.682, v: 2.24 }, DN60: { k03: 43.801, k10: 51.077, v: 1.56 }, DN65: { k03: 29.529, k10: 34.016, v: 1.33 }, DN80: { k03: 10.679, k10: 11.940, v: 0.88 }, DN100: { k03: 3.609, k10: 3.923, v: 0.56 } },
+    { Q: 4.60, DN50: { k03: 117.456, k10: 141.321, v: 2.34 }, DN60: { k03: 47.557, k10: 55.614, v: 1.63 }, DN65: { k03: 32.050, k10: 37.023, v: 1.39 }, DN80: { k03: 11.581, k10: 12.981, v: 0.92 }, DN100: { k03: 3.911, k10: 4.261, v: 0.59 } },
+    { Q: 4.80, DN50: { k03: 127.203, k10: 153.454, v: 2.44 }, DN60: { k03: 51.461, k10: 60.342, v: 1.70 }, DN65: { k03: 34.669, k10: 40.155, v: 1.45 }, DN80: { k03: 12.517, k10: 14.065, v: 0.95 }, DN100: { k03: 4.223, k10: 4.611, v: 0.61 } },
+    { Q: 5.00, DN50: { k03: 137.326, k10: 166.081, v: 2.55 }, DN60: { k03: 55.512, k10: 65.260, v: 1.77 }, DN65: { k03: 37.385, k10: 43.413, v: 1.51 }, DN80: { k03: 13.487, k10: 15.191, v: 0.99 }, DN100: { k03: 4.547, k10: 4.975, v: 0.64 } },
+    { Q: 5.20, DN50: { k03: 147.823, k10: 179.209, v: 2.65 }, DN60: { k03: 59.709, k10: 70.369, v: 1.84 }, DN65: { k03: 40.198, k10: 46.795, v: 1.57 }, DN80: { k03: 14.491, k10: 16.359, v: 1.03 }, DN100: { k03: 4.882, k10: 5.352, v: 0.66 } },
+    { Q: 5.40, DN50: { k03: 158.694, k10: 192.830, v: 2.75 }, DN60: { k03: 64.052, k10: 75.667, v: 1.91 }, DN65: { k03: 43.109, k10: 50.303, v: 1.63 }, DN80: { k03: 15.528, k10: 17.570, v: 1.07 }, DN100: { k03: 5.228, k10: 5.743, v: 0.69 } },
+    { Q: 5.60, DN50: { k03: 169.939, k10: 206.947, v: 2.85 }, DN60: { k03: 68.541, k10: 81.156, v: 1.98 }, DN65: { k03: 46.116, k10: 53.935, v: 1.69 }, DN80: { k03: 16.599, k10: 18.823, v: 1.11 }, DN100: { k03: 5.585, k10: 6.146, v: 0.71 } },
+    { Q: 5.80, DN50: { k03: 181.557, k10: 221.559, v: 2.95 }, DN60: { k03: 73.176, k10: 86.835, v: 2.05 }, DN65: { k03: 49.220, k10: 57.692, v: 1.75 }, DN80: { k03: 17.704, k10: 20.118, v: 1.15 }, DN100: { k03: 5.952, k10: 6.563, v: 0.74 } },
+    { Q: 6.00, DN60: { k03: 77.957, k10: 92.704, v: 2.12 }, DN65: { k03: 52.421, k10: 61.575, v: 1.81 }, DN80: { k03: 18.842, k10: 21.455, v: 1.19 }, DN100: { k03: 6.331, k10: 6.993, v: 0.76 } },
+    { Q: 6.20, DN60: { k03: 82.883, k10: 98.763, v: 2.19 }, DN65: { k03: 55.718, k10: 65.582, v: 1.87 }, DN80: { k03: 20.013, k10: 22.834, v: 1.23 }, DN100: { k03: 6.720, k10: 7.436, v: 0.79 } },
+    { Q: 6.40, DN60: { k03: 87.954, k10: 105.011, v: 2.26 }, DN65: { k03: 59.111, k10: 69.714, v: 1.93 }, DN80: { k03: 21.218, k10: 24.256, v: 1.27 }, DN100: { k03: 7.120, k10: 7.893, v: 0.81 } },
+    { Q: 6.60, DN60: { k03: 93.170, k10: 111.450, v: 2.33 }, DN65: { k03: 62.600, k10: 73.971, v: 1.99 }, DN80: { k03: 22.456, k10: 25.719, v: 1.31 }, DN100: { k03: 7.531, k10: 8.362, v: 0.84 } },
+    { Q: 6.80, DN60: { k03: 98.531, k10: 118.079, v: 2.41 }, DN65: { k03: 66.185, k10: 78.352, v: 2.05 }, DN80: { k03: 23.727, k10: 27.225, v: 1.35 }, DN100: { k03: 7.953, k10: 8.845, v: 0.87 } },
+    { Q: 7.00, DN60: { k03: 104.037, k10: 124.898, v: 2.48 }, DN65: { k03: 69.866, k10: 82.859, v: 2.11 }, DN80: { k03: 25.032, k10: 28.772, v: 1.39 }, DN100: { k03: 8.385, k10: 9.341, v: 0.89 }, DN125: { k03: 2.832, k10: 3.070, v: 0.57 } },
+    { Q: 7.20, DN60: { k03: 109.687, k10: 131.907, v: 2.55 }, DN65: { k03: 73.642, k10: 87.490, v: 2.17 }, DN80: { k03: 26.369, k10: 30.362, v: 1.43 }, DN100: { k03: 8.828, k10: 9.850, v: 0.92 } },
+    { Q: 7.40, DN60: { k03: 115.482, k10: 139.105, v: 2.62 }, DN65: { k03: 77.515, k10: 92.246, v: 2.23 }, DN80: { k03: 27.739, k10: 31.994, v: 1.47 }, DN100: { k03: 9.282, k10: 10.372, v: 0.94 } },
+    { Q: 7.50, DN125: { k03: 3.209, k10: 3.490, v: 0.61 } },
+    { Q: 7.60, DN60: { k03: 121.421, k10: 146.494, v: 2.69 }, DN65: { k03: 81.483, k10: 97.126, v: 2.29 }, DN80: { k03: 29.143, k10: 33.668, v: 1.51 }, DN100: { k03: 9.746, k10: 10.907, v: 0.97 } },
+    { Q: 7.80, DN60: { k03: 127.505, k10: 154.072, v: 2.76 }, DN65: { k03: 85.546, k10: 102.131, v: 2.35 }, DN80: { k03: 30.579, k10: 35.383, v: 1.55 }, DN100: { k03: 10.221, k10: 11.456, v: 0.99 } },
+    { Q: 8.00, DN60: { k03: 133.732, k10: 161.840, v: 2.83 }, DN65: { k03: 89.704, k10: 107.261, v: 2.41 }, DN80: { k03: 32.048, k10: 37.141, v: 1.59 }, DN100: { k03: 10.706, k10: 12.017, v: 1.02 }, DN125: { k03: 3.607, k10: 3.936, v: 0.65 } },
+    { Q: 8.20, DN60: { k03: 140.104, k10: 169.798, v: 2.90 }, DN65: { k03: 93.958, k10: 112.516, v: 2.47 }, DN80: { k03: 33.550, k10: 38.911, v: 1.63 }, DN100: { k03: 11.202, k10: 12.592, v: 1.04 } },
+    { Q: 8.40, DN60: { k03: 146.619, k10: 177.946, v: 2.97 }, DN65: { k03: 98.308, k10: 117.896, v: 2.53 }, DN80: { k03: 35.084, k10: 40.782, v: 1.67 }, DN100: { k03: 11.708, k10: 13.180, v: 1.07 } },
+    { Q: 8.50, DN125: { k03: 4.027, k10: 4.408, v: 0.69 } },
+
+    // Trang 108 (DN65 tiếp, DN80, DN100, DN125, DN150)
+    { Q: 8.60, DN65: { k03: 102.752, k10: 123.400, v: 2.59 }, DN80: { k03: 36.652, k10: 42.666, v: 1.71 }, DN100: { k03: 12.225, k10: 13.781, v: 1.09 } },
+    { Q: 8.80, DN65: { k03: 107.291, k10: 129.028, v: 2.65 }, DN80: { k03: 38.252, k10: 44.592, v: 1.75 }, DN100: { k03: 12.753, k10: 14.394, v: 1.12 } },
+    { Q: 9.00, DN65: { k03: 111.925, k10: 134.782, v: 2.71 }, DN80: { k03: 39.885, k10: 46.559, v: 1.79 }, DN100: { k03: 13.291, k10: 15.021, v: 1.15 }, DN125: { k03: 4.469, k10: 4.906, v: 0.73 }, DN150: { k03: 1.844, k10: 1.984, v: 0.51 } },
+    { Q: 9.20, DN65: { k03: 116.655, k10: 140.660, v: 2.77 }, DN80: { k03: 41.550, k10: 48.569, v: 1.83 }, DN100: { k03: 13.839, k10: 15.661, v: 1.17 } },
+    { Q: 9.40, DN65: { k03: 121.479, k10: 146.662, v: 2.83 }, DN80: { k03: 43.248, k10: 50.620, v: 1.87 }, DN100: { k03: 14.398, k10: 16.315, v: 1.20 } },
+    { Q: 9.50, DN125: { k03: 4.931, k10: 5.429, v: 0.77 }, DN150: { k03: 2.034, k10: 2.193, v: 0.54 } },
+    { Q: 9.60, DN65: { k03: 126.398, k10: 152.790, v: 2.89 }, DN80: { k03: 44.979, k10: 52.714, v: 1.91 }, DN100: { k03: 14.968, k10: 16.981, v: 1.22 } },
+    { Q: 9.80, DN65: { k03: 131.112, k10: 159.041, v: 2.95 }, DN80: { k03: 46.742, k10: 54.849, v: 1.95 }, DN100: { k03: 15.547, k10: 17.660, v: 1.25 } },
+
+    // Trang 109 (DN125, DN150, DN200)
+    { Q: 10.00, DN80: { k03: 48.537, k10: 57.027, v: 1.99 }, DN100: { k03: 16.137, k10: 18.352, v: 1.27 }, DN125: { k03: 5.415, k10: 5.977, v: 0.81 }, DN150: { k03: 2.232, k10: 2.412, v: 0.57 } },
+    { Q: 10.50, DN80: { k03: 53.168, k10: 62.654, v: 2.09 }, DN100: { k03: 17.658, k10: 20.140, v: 1.34 }, DN125: { k03: 5.920, k10: 6.552, v: 0.86 }, DN150: { k03: 2.438, k10: 2.641, v: 0.59 } },
+    { Q: 11.00, DN80: { k03: 58.002, k10: 68.542, v: 2.19 }, DN100: { k03: 19.244, k10: 22.010, v: 1.40 }, DN125: { k03: 6.445, k10: 7.151, v: 0.90 }, DN150: { k03: 2.653, k10: 2.880, v: 0.62 } },
+    { Q: 11.50, DN80: { k03: 63.037, k10: 74.693, v: 2.29 }, DN100: { k03: 20.894, k10: 23.961, v: 1.46 }, DN125: { k03: 6.992, k10: 7.777, v: 0.94 }, DN150: { k03: 2.876, k10: 3.129, v: 0.65 } },
+    { Q: 12.00, DN80: { k03: 68.275, k10: 81.105, v: 2.39 }, DN100: { k03: 22.608, k10: 25.993, v: 1.53 }, DN125: { k03: 7.559, k10: 8.428, v: 0.98 }, DN150: { k03: 3.107, k10: 3.388, v: 0.68 } },
+    { Q: 12.50, DN80: { k03: 73.714, k10: 87.780, v: 2.49 }, DN100: { k03: 24.387, k10: 28.107, v: 1.59 }, DN125: { k03: 8.147, k10: 9.104, v: 1.02 }, DN150: { k03: 3.347, k10: 3.656, v: 0.71 } },
+    { Q: 13.00, DN80: { k03: 79.354, k10: 94.716, v: 2.59 }, DN100: { k03: 26.230, k10: 30.302, v: 1.66 }, DN125: { k03: 8.756, k10: 9.806, v: 1.06 }, DN150: { k03: 3.595, k10: 3.935, v: 0.74 } },
+    { Q: 13.50, DN80: { k03: 85.196, k10: 101.914, v: 2.69 }, DN100: { k03: 28.136, k10: 32.579, v: 1.72 }, DN125: { k03: 9.385, k10: 10.533, v: 1.10 }, DN150: { k03: 3.852, k10: 4.224, v: 0.76 } },
+    { Q: 14.00, DN80: { k03: 91.239, k10: 109.374, v: 2.74 }, DN100: { k03: 30.107, k10: 34.937, v: 1.78 }, DN125: { k03: 10.035, k10: 11.285, v: 1.14 }, DN150: { k03: 4.116, k10: 4.522, v: 0.79 } },
+    { Q: 14.50, DN80: { k03: 67.482, k10: 117.095, v: 2.88 }, DN100: { k03: 32.141, k10: 37.376, v: 1.85 }, DN125: { k03: 10.705, k10: 12.063, v: 1.18 }, DN150: { k03: 4.389, k10: 4.830, v: 0.82 } },
+    { Q: 15.00, DN125: { k03: 11.396, k10: 12.867, v: 1.22 }, DN150: { k03: 4.669, k10: 5.149, v: 0.85 } },
+    { Q: 15.50, DN125: { k03: 12.107, k10: 13.695, v: 1.26 }, DN150: { k03: 4.958, k10: 5.477, v: 0.88 } },
+    { Q: 16.00, DN125: { k03: 12.838, k10: 14.549, v: 1.30 }, DN150: { k03: 5.255, k10: 5.814, v: 0.91 }, DN200: { k03: 1.297, k10: 1.389, v: 0.51 } },
+    { Q: 16.50, DN100: { k03: 40.914, k10: 47.947, v: 2.10 }, DN125: { k03: 13.590, k10: 15.429, v: 1.34 }, DN150: { k03: 5.560, k10: 6.162, v: 0.93 }, DN200: { k03: 1.371, k10: 1.471, v: 0.53 } },
+    { Q: 17.00, DN125: { k03: 14.362, k10: 16.333, v: 1.39 }, DN150: { k03: 5.873, k10: 6.519, v: 0.96 }, DN200: { k03: 1.448, k10: 1.555, v: 0.54 } },
+    { Q: 17.50, DN125: { k03: 15.154, k10: 17.263, v: 1.43 }, DN150: { k03: 6.194, k10: 6.887, v: 0.99 }, DN200: { k03: 1.526, k10: 1.641, v: 0.56 } },
+    { Q: 18.00, DN125: { k03: 15.966, k10: 18.219, v: 1.47 }, DN150: { k03: 6.523, k10: 7.264, v: 1.02 }, DN200: { k03: 1.606, k10: 1.729, v: 0.57 } },
+    { Q: 18.50, DN100: { k03: 50.699, k10: 59.817, v: 2.36 }, DN125: { k03: 16.799, k10: 19.199, v: 1.51 }, DN150: { k03: 6.861, k10: 7.651, v: 1.05 }, DN200: { k03: 1.688, k10: 1.820, v: 0.59 } },
+    { Q: 19.00, DN125: { k03: 17.651, k10: 20.205, v: 1.55 }, DN150: { k03: 7.206, k10: 8.017, v: 1.08 }, DN200: { k03: 1.772, k10: 1.913, v: 0.60 } },
+    { Q: 19.50, DN125: { k03: 18.524, k10: 21.237, v: 1.59 }, DN150: { k03: 7.559, k10: 8.454, v: 1.10 }, DN200: { k03: 1.858, k10: 2.008, v: 0.62 } },
+    { Q: 20.00, DN125: { k03: 19.416, k10: 22.293, v: 1.63 }, DN150: { k03: 7.920, k10: 8.870, v: 1.13 }, DN200: { k03: 1.945, k10: 2.105, v: 0.64 } },
+    { Q: 20.50, DN100: { k03: 61.493, k10: 72.987, v: 2.61 }, DN125: { k03: 20.329, k10: 23.375, v: 1.67 }, DN150: { k03: 8.289, k10: 9.296, v: 1.16 }, DN200: { k03: 2.035, k10: 2.204, v: 0.65 } },
+    { Q: 21.00, DN125: { k03: 21.262, k10: 24.482, v: 1.71 }, DN150: { k03: 8.665, k10: 9.732, v: 1.19 }, DN200: { k03: 2.126, k10: 2.306, v: 0.67 } },
+    { Q: 21.50, DN125: { k03: 22.214, k10: 25.614, v: 1.75 }, DN150: { k03: 9.050, k10: 10.177, v: 1.22 }, DN200: { k03: 2.219, k10: 2.410, v: 0.68 } },
+    { Q: 22.00, DN125: { k03: 23.187, k10: 26.772, v: 1.79 }, DN150: { k03: 9.443, k10: 10.633, v: 1.24 }, DN200: { k03: 2.314, k10: 2.516, v: 0.70 } },
+    { Q: 22.50, DN100: { k03: 73.291, k10: 87.456, v: 2.86 }, DN125: { k03: 24.180, k10: 27.955, v: 1.83 }, DN150: { k03: 9.843, k10: 11.098, v: 1.27 }, DN200: { k03: 2.411, k10: 2.624, v: 0.72 } },
+    { Q: 23.00, DN125: { k03: 25.192, k10: 29.163, v: 1.87 }, DN150: { k03: 10.252, k10: 11.573, v: 1.30 }, DN200: { k03: 2.510, k10: 2.734, v: 0.73 } },
+    { Q: 23.50, DN125: { k03: 26.224, k10: 30.397, v: 1.91 }, DN150: { k03: 10.668, k10: 12.057, v: 1.33 }, DN200: { k03: 2.611, k10: 2.847, v: 0.75 } },
+    { Q: 24.00, DN125: { k03: 27.277, k10: 31.655, v: 1.96 }, DN150: { k03: 11.092, k10: 12.552, v: 1.36 }, DN200: { k03: 2.713, k10: 2.962, v: 0.76 } },
+    { Q: 26.00, DN125: { k03: 31.684, k10: 36.942, v: 2.12 }, DN150: { k03: 12.867, k10: 14.627, v: 1.47 }, DN200: { k03: 3.141, k10: 3.443, v: 0.83 } },
+    { Q: 28.00, DN125: { k03: 36.408, k10: 42.633, v: 2.28 }, DN150: { k03: 14.766, k10: 16.857, v: 1.58 }, DN200: { k03: 3.599, k10: 3.959, v: 0.89 } },
+    { Q: 30.00, DN125: { k03: 41.448, k10: 48.728, v: 2.44 }, DN150: { k03: 16.790, k10: 19.244, v: 1.70 }, DN200: { k03: 4.085, k10: 4.510, v: 0.95 } },
+    { Q: 32.00, DN125: { k03: 46.802, k10: 55.226, v: 2.61 }, DN150: { k03: 18.937, k10: 21.787, v: 1.81 }, DN200: { k03: 4.600, k10: 5.096, v: 1.02 } },
+    { Q: 34.00, DN125: { k03: 52.471, k10: 62.128, v: 2.77 }, DN150: { k03: 21.208, k10: 24.485, v: 1.92 }, DN200: { k03: 5.144, k10: 5.717, v: 1.08 } },
+    { Q: 36.00, DN125: { k03: 58.454, k10: 69.432, v: 2.93 }, DN150: { k03: 23.602, k10: 27.339, v: 2.04 }, DN200: { k03: 5.717, k10: 6.372, v: 1.15 } },
+    { Q: 38.00, DN150: { k03: 26.119, k10: 30.348, v: 2.15 }, DN200: { k03: 6.317, k10: 7.063, v: 1.21 } }
 ];
 
+const allDNs = ["DN40", "DN50", "DN60", "DN65", "DN80", "DN100", "DN125", "DN150", "DN200"];
+
 function renderTable() {
-    const kOpt = document.getElementById("kSelect").value;
-    const qSearch = document.getElementById("qSearch").value.trim().replace('.', ',');
-    const tableHead = document.getElementById("tableHead");
-    const tableBody = document.getElementById("tableBody");
+    const kMode = document.getElementById('kSelect').value;
+    const dnFilter = document.getElementById('dnFilter').value;
+    const qFilter = parseFloat(document.getElementById('qInput').value);
 
-    // Dựng tiêu đề bảng (Header)
-    if (kOpt === "both") {
-        tableHead.innerHTML = `
-            <tr>
-                <th rowspan="3" class="col-q">Q<br>(l/s)</th>
-                <th colspan="3">DN40</th>
-                <th colspan="3">DN50</th>
-                <th colspan="3">DN60</th>
-            </tr>
-            <tr>
-                <th colspan="2">j (m/km)</th>
-                <th rowspan="2">v<br>(m/s)</th>
-                <th colspan="2">j (m/km)</th>
-                <th rowspan="2">v<br>(m/s)</th>
-                <th colspan="2">j (m/km)</th>
-                <th rowspan="2">v<br>(m/s)</th>
-            </tr>
-            <tr>
-                <th>k = 0,03mm</th>
-                <th>k = 0,10mm</th>
-                <th>k = 0,03mm</th>
-                <th>k = 0,10mm</th>
-                <th>k = 0,03mm</th>
-                <th>k = 0,10mm</th>
-            </tr>
-        `;
-    } else {
-        const kLabel = kOpt === "k003" ? "k = 0,03mm" : "k = 0,10mm";
-        tableHead.innerHTML = `
-            <tr>
-                <th rowspan="2" class="col-q">Q<br>(l/s)</th>
-                <th colspan="2">DN40</th>
-                <th colspan="2">DN50</th>
-                <th colspan="2">DN60</th>
-            </tr>
-            <tr>
-                <th>j (m/km)<br><small>(${kLabel})</small></th>
-                <th>v (m/s)</th>
-                <th>j (m/km)<br><small>(${kLabel})</small></th>
-                <th>v (m/s)</th>
-                <th>j (m/km)<br><small>(${kLabel})</small></th>
-                <th>v (m/s)</th>
-            </tr>
-        `;
+    const activeDNs = (dnFilter === 'all') ? allDNs : [dnFilter];
+
+    // Build Header
+    let headHTML = '<tr><th rowspan="3">Q<br>(l/s)</th>';
+    activeDNs.forEach(dn => {
+        let colSpan = (kMode === 'both') ? 3 : 2;
+        headHTML += `<th colspan="${colSpan}">${dn}</th>`;
+    });
+    headHTML += '</tr><tr>';
+
+    activeDNs.forEach(() => {
+        if (kMode === 'both') {
+            headHTML += '<th colspan="2">j (m/km)</th><th rowspan="2">v<br>(m/s)</th>';
+        } else {
+            headHTML += '<th>j (m/km)</th><th rowspan="2">v<br>(m/s)</th>';
+        }
+    });
+    headHTML += '</tr>';
+
+    if (kMode === 'both') {
+        headHTML += '<tr>';
+        activeDNs.forEach(() => {
+            headHTML += '<th>k = 0,03mm</th><th>k = 0,10mm</th>';
+        });
+        headHTML += '</tr>';
+    } else if (kMode === '0.03') {
+        headHTML += '<tr>';
+        activeDNs.forEach(() => { headHTML += '<th>k = 0,03mm</th>'; });
+        headHTML += '</tr>';
+    } else if (kMode === '0.10') {
+        headHTML += '<tr>';
+        activeDNs.forEach(() => { headHTML += '<th>k = 0,10mm</th>'; });
+        headHTML += '</tr>';
     }
 
-    // Nạp dữ liệu các dòng (Body)
-    tableBody.innerHTML = "";
-    
-    const filteredData = pipeData.filter(row => qSearch === "" || row.q.includes(qSearch));
+    document.getElementById('tableHead').innerHTML = headHTML;
 
-    if (filteredData.length === 0) {
-        const colSpanCount = kOpt === "both" ? 10 : 7;
-        tableBody.innerHTML = `<tr><td colspan="${colSpanCount}" style="padding:20px; color:#888;">Không tìm thấy lưu lượng Q phù hợp</td></tr>`;
-        return;
-    }
+    // Build Body
+    let bodyHTML = '';
+    rawData.forEach(row => {
+        if (!isNaN(qFilter) && row.Q !== qFilter) return;
 
-    filteredData.forEach(row => {
-        const tr = document.createElement("tr");
-        
-        let htmlContent = `<td class="col-q">${row.q}</td>`;
+        let rowHTML = `<tr><td><b>${row.Q.toFixed(2).replace('.', ',')}</b></td>`;
+        let hasData = false;
 
-        ["dn40", "dn50", "dn60"].forEach(dn => {
-            const item = row[dn];
-            if (!item) {
-                htmlContent += kOpt === "both" ? `<td></td><td></td><td></td>` : `<td></td><td></td>`;
-            } else {
-                if (kOpt === "both") {
-                    htmlContent += `
-                        <td class="j-val">${item.k003}</td>
-                        <td class="j-val">${item.k010}</td>
-                        <td class="v-val">${item.v}</td>
-                    `;
+        activeDNs.forEach(dn => {
+            const data = row[dn];
+            if (data) {
+                hasData = true;
+                if (kMode === 'both') {
+                    rowHTML += `<td class="red-text">${data.k03 ? data.k03.toFixed(3).replace('.', ',') : ''}</td>
+                                <td class="red-text">${data.k10 ? data.k10.toFixed(3).replace('.', ',') : ''}</td>
+                                <td class="blue-text">${data.v ? data.v.toFixed(2).replace('.', ',') : ''}</td>`;
+                } else if (kMode === '0.03') {
+                    rowHTML += `<td class="red-text">${data.k03 ? data.k03.toFixed(3).replace('.', ',') : ''}</td>
+                                <td class="blue-text">${data.v ? data.v.toFixed(2).replace('.', ',') : ''}</td>`;
                 } else {
-                    const jVal = kOpt === "k003" ? item.k003 : item.k010;
-                    htmlContent += `
-                        <td class="j-val">${jVal}</td>
-                        <td class="v-val">${item.v}</td>
-                    `;
+                    rowHTML += `<td class="red-text">${data.k10 ? data.k10.toFixed(3).replace('.', ',') : ''}</td>
+                                <td class="blue-text">${data.v ? data.v.toFixed(2).replace('.', ',') : ''}</td>`;
                 }
+            } else {
+                let emptyCols = (kMode === 'both') ? 3 : 2;
+                for (let i = 0; i < emptyCols; i++) rowHTML += '<td></td>';
             }
         });
 
-        tr.innerHTML = htmlContent;
-        tableBody.appendChild(tr);
+        rowHTML += '</tr>';
+        if (hasData || isNaN(qFilter)) {
+            bodyHTML += rowHTML;
+        }
     });
+
+    document.getElementById('tableBody').innerHTML = bodyHTML;
 }
 
-// Chạy khởi tạo bảng lần đầu
+// Khởi chạy bảng khi tải trang
 renderTable();
 </script>
 
